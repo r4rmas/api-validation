@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const { registerValidation, loginValidation } = require("../validation");
@@ -48,7 +49,10 @@ router.post("/login", async (req, res) => {
       if (result == false)
         return res.status(400).send("Email or password is wrong");
       //login
-      return res.status(200).send("Logged in");
+      //create and assing a json web token JWT
+      const token = jwt.sign({ _id: user.id }, process.env.TOKEN_SECRET);
+      res.header("auth-token", token).send(token);
+      // res.status(200).send("Logged in");
     }
   );
 });
